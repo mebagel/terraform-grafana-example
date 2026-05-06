@@ -45,6 +45,16 @@ variable "teams" {
     ])
     error_message = "Each team must define at least one notification email recipient."
   }
+
+  validation {
+    condition = alltrue([
+      for team_name, team in var.teams : alltrue([
+        for matcher in try(team.notification_policy.matchers, []) :
+        (matcher.label == "team" && matcher.match == "=") ? matcher.value == team_name : true
+      ])
+    ])
+    error_message = "If a matcher uses label=team with match==, its value must equal the team key."
+  }
 }
 
 variable "default_notification_emails" {
