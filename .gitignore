@@ -11,3 +11,5 @@ override.tf.json
 *_override.tf.json
 !*.tfvars.example
 .terraform.lock.hcl
+*.plan
+*.json
