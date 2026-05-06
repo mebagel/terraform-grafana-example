@@ -10,6 +10,6 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 !*.tfvars.example
-.terraform.lock.hcl
 *.plan
-*.json
+state-before-refresh.json
+state-after-refresh.json

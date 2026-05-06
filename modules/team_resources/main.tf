@@ -9,6 +9,14 @@ terraform {
 locals {
   team              = lower(var.team_name)
   grafana_team_name = coalesce(var.grafana_team_name, local.team)
+  oncall_route_type = coalesce(var.oncall_route_type, "jinja2")
+  oncall_route_regex = coalesce(
+    var.oncall_route_regex,
+    <<EOT
+{{ payload.groupLabels.env == "prod" }}
+EOT
+  )
+  oncall_route_pos = coalesce(var.oncall_route_pos, 0)
 }
 
 data "grafana_oncall_team" "team" {
@@ -84,11 +92,9 @@ resource "grafana_oncall_route" "team" {
   count               = var.irm_enabled ? 1 : 0
   integration_id      = grafana_oncall_integration.team[0].id
   escalation_chain_id = grafana_oncall_escalation_chain.team[0].id
-  routing_type        = "jinja2"
-  routing_regex       = <<EOT
-{{ payload.groupLabels.env == "prod" }}
-EOT
-  position            = 0
+  routing_type        = local.oncall_route_type
+  routing_regex       = local.oncall_route_regex
+  position            = local.oncall_route_pos
 }
 
 output "contact_point_name" {

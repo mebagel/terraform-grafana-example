@@ -21,6 +21,13 @@ teams = {
     grafana_team_name   = "team4"
     irm_enabled         = true
     notification_emails = ["team4-alerts@example.com", "team4-manager-alerts@example.com"]
+    oncall_route = {
+      routing_type = "jinja2"
+      routing_regex = <<EOT
+{{ payload.groupLabels.env == "prod" and payload.groupLabels.team == "team4" }}
+EOT
+      position = 0
+    }
     notification_policy = {
       continue        = true
       group_by        = ["alertname", "team", "severity", "region"]

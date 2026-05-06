@@ -16,3 +16,21 @@ variable "irm_enabled" {
   type    = bool
   default = false
 }
+
+variable "oncall_route_type" {
+  type     = string
+  default  = null
+  nullable = true
+}
+
+variable "oncall_route_regex" {
+  type     = string
+  default  = null
+  nullable = true
+}
+
+variable "oncall_route_pos" {
+  type     = number
+  default  = null
+  nullable = true
+}

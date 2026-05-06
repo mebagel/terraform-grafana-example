@@ -19,6 +19,11 @@ variable "teams" {
     notification_emails = list(string)
     grafana_team_name   = optional(string)
     irm_enabled         = optional(bool, false)
+    oncall_route = optional(object({
+      routing_type  = optional(string)
+      routing_regex = optional(string)
+      position      = optional(number)
+    }))
     notification_policy = optional(object({
       continue        = optional(bool)
       group_by        = optional(list(string))
@@ -44,6 +49,13 @@ variable "teams" {
       for team in values(var.teams) : length(team.notification_emails) > 0
     ])
     error_message = "Each team must define at least one notification email recipient."
+  }
+
+  validation {
+    condition = alltrue([
+      for team in values(var.teams) : contains(["jinja2", "regex", "content_based"], try(team.oncall_route.routing_type, "jinja2"))
+    ])
+    error_message = "oncall_route.routing_type must be one of: jinja2, regex, content_based."
   }
 
   validation {
