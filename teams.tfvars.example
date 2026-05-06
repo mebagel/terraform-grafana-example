@@ -1,0 +1,49 @@
+grafana_url        = "https://your-stack.grafana.net"
+grafana_oncall_url = "https://oncall-prod-region.grafana.net/oncall"
+
+default_notification_emails = ["platform-alerts@example.com"]
+
+teams = {
+  team1 = {
+    notification_emails = ["team1-alerts@example.com"]
+  }
+  team2 = {
+    notification_emails = ["team2-alerts@example.com", "team2-backup-alerts@example.com"]
+    notification_policy = {
+      group_by        = ["alertname", "team", "severity"]
+      repeat_interval = "2h"
+    }
+  }
+  team3 = {
+    notification_emails = ["team3-alerts@example.com"]
+  }
+  team4 = {
+    grafana_team_name   = "team4"
+    irm_enabled         = true
+    notification_emails = ["team4-alerts@example.com", "team4-manager-alerts@example.com"]
+    notification_policy = {
+      continue        = true
+      group_by        = ["alertname", "team", "severity", "region"]
+      group_wait      = "10s"
+      group_interval  = "2m"
+      repeat_interval = "1h"
+      matchers = [
+        {
+          label = "team"
+          match = "="
+          value = "team4"
+        },
+        {
+          label = "severity"
+          match = "=~"
+          value = "critical|warning"
+        },
+        {
+          label = "env"
+          match = "="
+          value = "prod"
+        }
+      ]
+    }
+  }
+}
